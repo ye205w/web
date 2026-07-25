@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>紫金山下载站</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: url('DSC08853.JPG') fixed;
+            background-size: cover;
+        }
+        /* 基础重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        
+        /* 导航栏样式 */
+        .nav {
+            width: 90%;
+            max-width: 1200px;
+            padding: 15px 0;
+            background: rgba(25, 118, 210, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav ul {
+            display: flex;
+            justify-content: space-around;
+            list-style: none;
+        }
+
+        .nav a {
+            color: rgba(255, 255, 255, 0.95) !important;
+            text-decoration: none;
+            font-size: 18px;
+            padding: 10px 25px;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .nav a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .nav-box {
+            position: absolute;
+            bottom: 0;
+            height: 3px;
+            width: 25%;
+            background: #11c455;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 2px;
+        }
+
+        /* 内容区域 */
+        .content-section {
+            margin-top: 100px;
+            padding: 40px 20px;
+            min-height: calc(100vh - 100px);
+            width: 100%;
+        }
+
+        /* 毛玻璃容器 */
+        .frosted-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            padding: 60px;
+            margin: 70px auto;
+            max-width: 1200px;
+            box-shadow: 0 8px 72px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+            display: flex;
+            align-items: center;
+            gap: 60px;
+        }
+
+        .frosted-box.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 团队介绍布局 */
+        .team-image {
+            flex: 0 0 45%;
+            height: 500px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .team-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .team-content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .team-content h2 {
+            font-size: 2.8rem;
+            margin-bottom: 2rem;
+            color: #fff;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.1em;
+        }
+
+        .team-description {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.97);
+            text-align: justify;
+            background: rgba(0, 0, 0, 0.15);
+            padding: 25px;
+            border-radius: 15px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .frosted-box {
+                flex-direction: column;
+                padding: 40px;
+                gap: 40px;
+                border-radius: 40px;
+            }
+
+            .team-image {
+                flex: none;
+                width: 100%;
+                height: 400px;
+            }
+
+            .team-content {
+                width: 100%;
+                padding: 0;
+            }
+
+            .team-content h2 {
+                font-size: 2.4rem;
+                text-align: center;
+            }
+
+            .team-description {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .frosted-box {
+                padding: 30px;
+                margin: 40px auto;
+                border-radius: 30px;
+            }
+
+            .team-image {
+                height: 300px;
+            }
+
+            .team-content h2 {
+                font-size: 2rem;
+            }
+
+            .team-description {
+                font-size: 1rem;
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .team-image {
+                height: 250px;
+            }
+
+            .team-content h2 {
+                font-size: 1.8rem;
+            }
+
+            .team-description {
+                font-size: 0.95rem;
+                padding: 15px;
+            }
+        }
+        .nav {
+    width: 90%;
+    max-width: 1200px;
+    padding: 15px 0;
+    /* 修改背景为透明磨砂效果 */
+    background: rgba(247, 251, 255, 0.945); /* 降低不透明度 */
+    backdrop-filter: blur(20px); /* 增强模糊效果 */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* 添加半透明白色边框 */
+    border-radius: 12px;
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* 调整阴影透明度 */
+}
+
+/* 导航链接颜色优化 */
+.nav a {
+    color: rgba(255, 255, 255, 0.9) !important; /* 稍微降低文字亮度 */
+    text-decoration: none;
+    font-size: 18px;
+    padding: 10px 25px;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+
+/* 悬停效果调整 */
+.nav a:hover {
+    background: rgba(255, 255, 255, 0.15); /* 更淡的悬停背景 */
+    transform: translateY(-2px);
+}
+
+/* 指示条颜色调整 */
+.nav-box {
+    background: rgba(255, 255, 255, 0.2); /* 半透明白色指示条 */
+}
+/* 修改后的导航栏样式 */
+.nav {
+    width: 90%;
+    max-width: 1200px;
+    padding: 15px 0;
+    /* 核心改造：三重透明磨砂效果 */
+    background: linear-gradient(
+        to right,
+        rgba(223, 226, 228, 0.3),
+        rgba(223, 226, 228, 0.3)
+    ); /* 双色渐变增强层次 */
+    backdrop-filter: blur(25px); /* 强化模糊强度 */
+    -webkit-backdrop-filter: blur(25px); /* 兼容Safari */
+    border: 1px solid rgba(255, 255, 255, 0.15); /* 更细腻的边框 */
+    border-radius: 12px; /* 圆角微调 */
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.1),
+        inset 0 0 12px rgba(255, 255, 255, 0.05); /* 内发光增强层次 */
+}
+
+/* 导航链接颜色优化 */
+.nav a {
+    color: rgba(255, 255, 255, 0.85) !important; /* 提升文字对比度 */
+    text-decoration: none;
+    font-size: 18px;
+    padding: 12px 28px; /* 增大点击区域 */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 12px; /* 与导航栏圆角匹配 */
+    position: relative;
+    overflow: hidden;
+}
+
+/* 悬停动态效果 */
+.nav a:hover {
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0.05)
+    ); /* 更细腻的渐变 */
+    transform: translateY(-2px) scale(1.02); /* 添加微放大效果 */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* 增强文字立体感 */
+}
+
+/* 活动状态指示条 */
+.nav-box {
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.15),
+        rgba(255, 255, 255, 0.3)
+    ); /* 渐变指示条 */
+    backdrop-filter: blur(15px); /* 保持与导航栏一致的模糊度 */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+}
+/* 新增全屏滚动样式 */
+        html {
+            scroll-behavior: smooth;
+            overflow: auto; /* 允许页面正常滚动，修复导航锚点与子菜单交互问题 */
+        }
+
+        .scroll-container {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+        }
+
+        .content-section {
+            height: 100vh;
+            scroll-snap-align: start;
+            padding: 120px 20px 40px;
+            position: relative;
+            margin-top: 0; /* 移除之前的margin-top */
+        }
+
+        /* 禁用默认滚动条 */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        /* 部门架构样式 */
+    .department-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+        margin-top: 40px;
+    }
+
+    .department-card {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(12px);
+        border-radius: 12px;
+        padding: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        transition: all 0.3s ease;
+        min-height: 300px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .department-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .department-icon {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+    }
+
+    .department-title {
+        font-size: 1.5rem;
+        color: #fff;
+        margin-bottom: 15px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .department-description {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 1.6;
+    }
+
+    @media (max-width: 1200px) {
+        .department-grid {
+            grid-template-columns: 1fr;
+            max-width: 600px;
+            margin: 30px auto;
+        }
+        
+        .department-card {
+            min-height: auto;
+            padding: 25px;
+        }
+    }
+    /* 在.frosted-box中添加全局文字颜色 */
+.frosted-box {
+    color: #fff; /* 新增全局文字颜色 */
+    /* 原有其他样式保持不变 */
+}
+
+/* 修正部门卡片的文字颜色 */
+.department-card {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff; /* 新增卡片文字颜色 */
+}
+
+.department-description {
+    color: rgba(255, 255, 255, 0.9) !important; /* 增强对比度 */
+}
+
+/* 修正导航栏文字颜色 */
+.nav a {
+    color: rgba(255, 255, 255, 0.95) !important; 
+}
+
+/* 新增全局文字阴影保证可读性 */
+body {
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* 修正团队介绍文字样式 */
+.team-description {
+    color: rgba(255, 255, 255, 0.97) !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+        /* 下拉菜单样式 */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown > a::after {
+            content: '';
+            margin-left: 8px;
+        }
+
+        .submenu {
+            /* 竖向排列（默认），更明显的透明磨砂风 */
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            transform: translateY(8px);
+            transition: transform 0.18s ease, opacity 0.18s ease;
+            opacity: 0;
+            pointer-events: none;
+            background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
+            background-color: rgba(255,255,255,0.08); /* fallback */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 8px;
+            padding: 8px 4px;
+            min-width: 180px;
+            white-space: normal;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+            z-index: 10;
+        }
+
+        .submenu a {
+            color: rgba(255,255,255,0.95);
+            padding: 6px 10px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.16s ease, color 0.12s ease;
+        }
+
+        .submenu a:hover,
+        .submenu a:focus {
+            background: rgba(255,255,255,0.06);
+            color: #ffffff;
+        }
+
+        .submenu li {
+            list-style: none;
+        }
+
+        .submenu a {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 14px;
+            color: #fff !important;
+            text-decoration: none;
+            font-size: 15px;
+            border-radius: 6px;
+        }
+
+        .submenu a:hover {
+            background: rgba(255,255,255,0.06);
+            transform: none;
+        }
+
+        /* 用 .open 类控制子菜单显示，配合下面的 JS 管理延迟，避免误触 */
+        .dropdown.open .submenu {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* 小屏幕回退为竖排 */
+        @media (max-width: 768px) {
+            .submenu { left: 0; }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="nav">
+        <ul>
+            <li><a href="首页.html" data-color="#1976D2">首页</a></li>
+            <li class="dropdown">
+                <a href="团队介绍.html" data-color="#4CAF50" data-active>团队介绍</a>
+                <ul class="submenu">
+                    <li><a href="团队介绍.html#team" data-color="#4CAF50">概述</a></li>
+                    <li><a href="团队介绍.html#departments" data-color="#4CAF50">部门架构</a></li>
+                    <li><a href="团队介绍.html#works" data-color="#4CAF50">团队作品</a></li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a href="团队所在学校介绍.html" data-color="#FF9800">团队所在学校</a>
+                <ul class="submenu">
+                    <li><a href="#campus-intro" data-color="#FF9800">校园简介</a></li>
+                    <li><a href="#campus-location" data-color="#FF9800">校园地理位置</a></li>
+                    <li><a href="#teaching-building" data-color="#FF9800">教学楼</a></li>
+                    <li><a href="#campus-history" data-color="#FF9800">校园校史</a></li>
+                    <li><a href="#campus-activities" data-color="#FF9800">校园活动</a></li>
+                    <li><a href="#campus-scenery" data-color="#FF9800">校园风景</a></li>
+                    <li><a href="#campus-books" data-color="#FF9800">校史书籍</a></li>
+                    <li><a href="#campus-recap" data-color="#FF9800">十大歌手回看</a></li>
+                </ul>
+            </li>
+            <li><a href="推荐软件下载.html" data-color="#E91E63">学校信息查看</a></li>
+        </ul>
+        <div class="nav-box"></div>
+    </nav>
+
+    <!-- 团队介绍 -->
+    <section class="content-section" id="team">
+        <div class="frosted-box">
+            <div class="team-image">
+                <img src="mmexport1747560365279.jpg" alt="团队合影">
+            </div>
+            
+            <div class="team-content">
+                <h2>团队介绍</h2>
+                <p class="team-description">我们是一支由资深开发者组成的技术团队，致力于打造卓越的软件产品和解决方案。团队成员拥有丰富的行业经验和技术积累，专注于技术创新和用户体验优化。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 其他内容 -->
+    
+
+    <script>
+        // 导航栏交互脚本
+        class Navigation {
+            constructor() {
+                    this.nav = document.querySelector('.nav');
+                    this.navBox = this.nav.querySelector('.nav-box');
+                    // 仅选择顶层导航触发项（排除子菜单项）
+                    this.navLinks = this.nav.querySelectorAll(':scope > ul > li > a');
+                this.defaultColor = '#FFD600';
+
+                this.init();
+                this.addEventListeners();
+            }
+
+            init() {
+                // 初始化指示条到第一个带 data-active 的顶层项，未命中则到第一个项
+                this.updateIndicator(this.getActiveLink());
+            }
+
+            addEventListeners() {
+                this.navLinks.forEach(link => {
+                    link.addEventListener('mouseenter', () => {
+                        const color = link.dataset.color || this.defaultColor;
+                        this.navBox.style.backgroundColor = color;
+                        this.updateIndicator(link);
+                    });
+
+                    link.addEventListener('mouseleave', () => {
+                        this.navBox.style.backgroundColor = this.defaultColor;
+                        this.updateIndicator(this.getActiveLink());
+                    });
+
+                    link.addEventListener('click', e => this.handleClick(e, link));
+                });
+
+                window.addEventListener('resize', () => this.updateIndicator(this.getActiveLink()));
+            }
+
+            updateIndicator(link) {
+                if (!link) return;
+                
+                const navRect = this.nav.getBoundingClientRect();
+                const linkRect = link.getBoundingClientRect();
+                
+                this.navBox.style.width = `${link.offsetWidth}px`;
+                this.navBox.style.left = `${linkRect.left - navRect.left}px`;
+            }
+
+            getActiveLink() {
+                for (const l of this.navLinks) if (l.hasAttribute('data-active')) return l;
+                return this.navLinks[0] || null;
+            }
+
+            handleClick(e, link) {
+                e.preventDefault();
+                // 点击顶层项：如果是锚点则平滑滚动，否则导航到新页
+                const href = link.getAttribute('href') || '';
+                this.navLinks.forEach(l => l.removeAttribute('data-active'));
+                link.setAttribute('data-active', '');
+                this.updateIndicator(link);
+
+                if (href.startsWith('#')) {
+                    const id = href.slice(1);
+                    const target = document.getElementById(id);
+                    if (target) target.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    if (window.location.pathname !== link.pathname) {
+                        window.location.assign(link.href);
+                    }
+                }
+            }
+        }
+
+        // 模块加载控制
+        class ModuleLoader {
+            constructor() {
+                this.observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        }
+                    });
+                }, {
+                    threshold: 0.2,
+                    rootMargin: '0px 0px -20% 0px'
+                });
+
+                document.querySelectorAll('.frosted-box').forEach(box => {
+                    this.observer.observe(box);
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const navInstance = new Navigation();
+            new ModuleLoader();
+
+            // 子菜单点击：平滑滚动到对应锚点并将顶层触发项设为激活
+            document.querySelectorAll('.nav .submenu a').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const href = this.getAttribute('href') || '';
+                    if (href.startsWith('#')) {
+                        const id = href.slice(1);
+                        const target = document.getElementById(id);
+                        if (target) target.scrollIntoView({ behavior: 'smooth' });
+                    }
+
+                    // 激活顶部“团队介绍”触发器并更新指示条
+                    const trigger = document.querySelector('.nav .dropdown > a');
+                    if (trigger) {
+                        document.querySelectorAll('.nav > ul > li > a').forEach(l => l.removeAttribute('data-active'));
+                        trigger.setAttribute('data-active', '');
+                        if (navInstance) navInstance.updateIndicator(trigger);
+                    }
+                });
+            });
+
+            // 如果链接来自其它页面并包含 hash，加载后平滑滚动到对应锚点
+            if (window.location.hash) {
+                const id = window.location.hash.slice(1);
+                const target = document.getElementById(id);
+                if (target) {
+                    // 延迟以避免与其他加载时滚动控制冲突
+                    setTimeout(() => { target.scrollIntoView({ behavior: 'smooth' }); }, 120);
+                }
+            }
+
+            // 用 JS 管理子菜单打开/关闭，带短延迟避免从父项到子菜单的误触闪烁
+            document.querySelectorAll('.nav .dropdown').forEach(drop => {
+                let closeTimer = null;
+                const link = drop.querySelector(':scope > a');
+
+                const open = () => {
+                    if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+                    drop.classList.add('open');
+                };
+
+                const close = () => {
+                    if (closeTimer) clearTimeout(closeTimer);
+                    closeTimer = setTimeout(() => { drop.classList.remove('open'); }, 180);
+                };
+
+                drop.addEventListener('mouseenter', open);
+                drop.addEventListener('mouseleave', close);
+
+                // 移动端或触摸设备：点击切换展开（首次点击展开，第二次点击导航）
+                link.addEventListener('click', function(e) {
+                    if (window.matchMedia && window.matchMedia('(max-width: 768px)').matches) {
+                        e.preventDefault();
+                        drop.classList.toggle('open');
+                        // 更新指示条到触发器
+                        document.querySelectorAll('.nav > ul > li > a').forEach(l => l.removeAttribute('data-active'));
+                        this.setAttribute('data-active', '');
+                        if (navInstance) navInstance.updateIndicator(this);
+                    }
+                });
+            });
+        });
+    </script>
+    <section class="content-section" id="departments">
+    <div class="frosted-box">
+        <h2>部门架构</h2>
+        <div class="department-grid">
+            <div class="department-card">
+                <div class="department-icon">🎓</div>
+                <h3 class="department-title">教学部</h3>
+                <p class="department-description">
+                    负责技术培训与知识传承，定期开展技术研讨会和技能培训课程，
+                    培养团队成员的技术能力，制定技术学习路线图。
+                </p>
+            </div>
+            
+            <div class="department-card">
+                <div class="department-icon">💻</div>
+                <h3 class="department-title">信息后勤开发部</h3>
+                <p class="department-description">
+                    负责技术基础设施建设和维护，保障开发环境稳定运行，
+                    管理服务器资源，优化开发流程，提供技术支持。
+                </p>
+            </div>
+            
+            <div class="department-card">
+                <div class="department-icon">🎉</div>
+                <h3 class="department-title">整活部</h3>
+                <p class="department-description">
+                    负责团队文化建设与创意活动策划，组织技术创意比赛，
+                    策划团建活动，活跃团队氛围，激发创新思维。
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+    <section class="content-section" id="works">
+    <div class="frosted-box" style="max-width:1200px;padding:60px;margin:70px auto;border-radius:12px;gap:60px;">
+        <h2>团队作品</h2>
+        <div class="department-grid" style="gap:60px;">
+            <div class="department-card" style="min-height:500px;padding:30px 30px 30px 30px;">
+                <!-- 可插入作品图片 -->
+                <div style="width:100%;height:140px;overflow:hidden;border-radius:10px;margin-bottom:18px;background:rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;">
+                    <img src="封面图.jpg" alt="团队作品1" style="max-width:100%;max-height:100%;object-fit:cover;">
+                </div>
+                <h1 style="font-size:1.5rem;margin:0 0 10px 0;">噪音检测器</h1>
+                <p>噪音检测器，可以检测噪音,创造一个安静的校园</p>
+            </div>
+            
+            <div class="department-card" style="min-height:500px;padding:30px 30px 30px 30px;">
+                <!-- 可插入作品图片 -->
+                <div style="width:100%;height:140px;overflow:hidden;border-radius:10px;margin-bottom:18px;background:rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;">
+                    <img src="666894306f30c45fda2588ddcfa8164.jpg" alt="团队作品2" style="max-width:100%;max-height:100%;object-fit:cover;">
+                </div>
+                <h1 style="font-size:1.5rem;margin:0 0 10px 0;">灯光控住器</h1>
+                <p>灯光控住器，可以在当没人的时候自动关闭灯光,创造一个绿色节能的校园</p>
+            </div>
+        </div>
+    </div>
+</section>
+    
+    <!-- 成员与联系区已移除 -->
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+<!-- 新增：鼠标滚轮切换模块特效 -->
+<script>
+        class ScrollController {
+            constructor() {
+                this.sections = Array.from(document.querySelectorAll('.content-section'));
+                this.currentIndex = 0;
+                this.isScrolling = false;
+                this.scrollTimeout = null;
+                this.init();
+            }
+
+            init() {
+                window.addEventListener('wheel', this.handleWheel.bind(this), { passive: false });
+                window.addEventListener('keydown', this.handleKeydown.bind(this));
+            }
+
+            handleWheel(e) {
+                if (this.isScrolling) return;
+                e.preventDefault();
+
+                // 累计滚轮次数，防止误触
+                if (!this.wheelCount) this.wheelCount = 0;
+                this.wheelCount += Math.abs(e.deltaY) > 0 ? 1 : 0;
+                if (this.wheelCount < 2) return;
+                this.wheelCount = 0;
+
+                const delta = Math.sign(e.deltaY);
+                const newIndex = Math.max(0, Math.min(this.currentIndex + delta, this.sections.length - 1));
+
+                if (newIndex !== this.currentIndex) {
+                    this.isScrolling = true;
+                    this.currentIndex = newIndex;
+                    this.scrollToSection();
+                }
+            }
+
+            handleKeydown(e) {
+                if (this.isScrolling) return;
+                // 支持上下左右、PageUp/PageDown、W/S、J/K
+                if (
+                    ["ArrowDown", "ArrowRight", "PageDown", "s", "S", "j", "J"].includes(e.key)
+                ) {
+                    e.preventDefault();
+                    this.goToSection(this.currentIndex + 1);
+                } else if (
+                    ["ArrowUp", "ArrowLeft", "PageUp", "w", "W", "k", "K"].includes(e.key)
+                ) {
+                    e.preventDefault();
+                    this.goToSection(this.currentIndex - 1);
+                }
+            }
+
+            goToSection(idx) {
+                const newIndex = Math.max(0, Math.min(idx, this.sections.length - 1));
+                if (newIndex !== this.currentIndex) {
+                    this.isScrolling = true;
+                    this.currentIndex = newIndex;
+                    this.scrollToSection();
+                }
+            }
+
+            scrollToSection() {
+                const target = this.sections[this.currentIndex];
+                document.body.style.backgroundColor = "#181c24";
+                window.scrollTo({
+                    top: target.offsetTop,
+                    behavior: 'smooth'
+                });
+
+                if (this.scrollTimeout) clearTimeout(this.scrollTimeout);
+                this.scrollTimeout = setTimeout(() => {
+                    this.isScrolling = false;
+                    document.body.style.backgroundColor = "";
+                }, 800);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new ScrollController();
+        });
+    </script>
+</body>
+</html>

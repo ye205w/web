@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>紫金山下载站</title>
+    <style>
+       
+        /* 基础重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* 滚动容器 */
+        .scroll-container {
+            height: 100vh;
+            overflow-y: auto;
+            scroll-snap-type: y mandatory;
+        }
+
+        /* 视频容器 */
+        .hero-section {
+            height: 100vh;
+            position: relative;
+            scroll-snap-align: start;
+        }
+
+        video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+
+        /* 导航栏样式 */
+        .nav {
+            width: 90%;
+            max-width: 1200px;
+            padding: 15px 0;
+            background: rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000; /* 保证导航栏始终在最上方 */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .nav ul {
+            display: flex;
+            justify-content: space-around;
+            list-style: none;
+        }
+
+        .nav a {
+            color: rgba(255, 255, 255, 0.95) !important;
+            text-decoration: none;
+            font-size: 18px;
+            padding: 10px 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            border-radius: 8px;
+        }
+
+        .nav a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .nav-box {
+            position: absolute;
+            bottom: 0;
+            height: 3px;
+            width: 25%;
+            background: #FFD600; /* 活力黄指示条 */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 2px;
+        }
+
+        /* 打字机效果 */
+        .tribute-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 2;
+        }
+
+        .tribute-text {
+            font-size: 48px;
+            font-weight: 600;
+            color: #fff !important;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            font-family: '微软雅黑', sans-serif;
+            overflow: hidden;
+            white-space: nowrap;
+            animation: 
+                typing 3s steps(15, end) forwards,
+                blink 1s step-end infinite;
+        }
+
+        /* 主要内容区域 */
+        .main-content {
+            position: relative;
+            z-index: 1;
+            height: 100vh;
+            scroll-snap-align: start;
+            background: #f8f9fa url('DSC08853.JPG') center center/cover no-repeat;
+            padding: 120px 20px 60px 20px; /* 顶部加大，底部适中，整体下移 */
+            display: flex;
+            align-items: center; /* 垂直居中 */
+            justify-content: center;
+            gap: 32px;
+        }
+
+        .content-card {
+            max-width: 1200px;
+            background: rgba(255,255,255,0.18) !important; /* 透明磨砂 */
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+            color: #2c3e50;
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            animation: cardRise 1s ease-out forwards;
+            visibility: visible !important;
+            will-change: transform, opacity;
+            z-index: 100;
+        }
+
+        /* 新增三框样式 */
+.main-content { gap: 32px; }
+.side-card, .content-card {
+    flex: 0 1 500px;
+    min-width: 280px;
+    max-width: 380px;
+    height: 70vh; /* 与.content-card高度一致 */
+    max-height: 600px;
+    background: rgba(255,255,255,0.18); /* 透明磨砂风格 */
+    border-radius: 16px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+    color: #2c3e50;
+    backdrop-filter: blur(10px) saturate(160%);
+    -webkit-backdrop-filter: blur(10px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.18);
+    will-change: backdrop-filter, opacity, transform;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px 18px;
+    box-sizing: border-box;
+    overflow: hidden;
+    opacity: 0.95; /* 轻微透明 */
+}
+.content-card { align-items: flex-start; justify-content: flex-start; }
+.left-card { order: 0; }
+.content-card { order: 1; }
+.right-card { order: 2; }
+.log-scroll { flex: 1; width: 100%; overflow-y: auto; max-height: 140px; margin-top: 8px; padding-right: 4px; }
+@media (max-width: 1100px) {
+    .main-content {
+        flex-direction: column;
+        gap: 18px;
+        padding: 100px 8px 40px 8px; /* 移动端也适当下移 */
+    }
+    .side-card, .content-card {
+        width: 100%; min-width: 0; max-width: 100%; margin: 0; height: 220px;
+    }
+}
+
+/* 动画关键帧 */
+        @keyframes typing {
+            from { max-width: 0; opacity: 0; }
+            to { max-width: 100%; opacity: 1; }
+        }
+
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .nav {
+                width: 95%;
+                padding: 10px 0;
+            }
+            
+            .nav a {
+                font-size: 16px;
+                padding: 8px 15px;
+            }
+            
+            .tribute-text {
+                font-size: 32px;
+            }
+        }
+        /* 修复导航栏磨砂效果 */
+.nav {
+    background: rgba(255, 255, 255, 0.1) !important; /* 透明背景 */
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%); /* Safari支持 */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 确保内容卡片可见性 */
+.content-card {
+    will-change: transform, opacity; /* 启用硬件加速 */
+    z-index: 100; /* 确保在最上层 */
+}
+
+/* 修复滚动容器高度 */
+.scroll-container {
+    height: 100vh;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+}
+
+/* 增强内容卡片动画 */
+.content-card.active {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    animation: cardRise 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes cardRise {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 修复iOS滑动问题 */
+@supports (-webkit-overflow-scrolling: touch) {
+    .scroll-container {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+/* 修正导航栏冲突样式 */
+.nav {
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    /* 移除冲突的科技蓝背景设置 */
+}
+
+/* 增强内容可见性 */
+.main-content {
+    position: relative;
+    z-index: 1000; /* 确保在视频层上方 */
+}
+
+.content-card {
+    opacity: 1 !important; /* 强制可见 */
+    transform: translateY(0) !important;
+    animation: cardRise 1s ease-out forwards;
+    visibility: visible !important;
+}
+
+
+/* 移除原有.content-card.active样式 */
+/* 修正导航栏指示条样式 */
+.nav-box {
+    position: absolute;
+    bottom: 0;
+    left: 0; /* 添加初始位置 */
+    height: 3px;
+    width: 25%;
+    background: #FFD600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 2px;
+    transform-origin: left center; /* 添加形变基准点 */
+    opacity: 0.9; /* 确保可见性 */
+    z-index: 5; /* 提升层级 */
+}
+
+/* 修正导航栏父级定位 */
+.nav {
+    position: fixed;
+    overflow: hidden; /* 防止指示条溢出 */
+}
+/* 增强导航栏指示条样式 */
+.nav-box {
+    position: absolute;
+    bottom: 0;
+    height: 3px;
+    width: 100px; /* 初始宽度 */
+    background: #FFD600;
+    border-radius: 2px;
+    opacity: 1;
+    transform-origin: center;
+    transition: 
+        width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 5;
+    box-shadow: 0 2px 8px rgba(255, 214, 0, 0.3);
+}
+
+/* 优化导航栏布局 */
+.nav ul {
+    position: relative; /* 为指示条创建定位上下文 */
+    padding: 0 10px; /* 增加内边距 */
+}
+
+.nav a {
+    padding: 10px 30px; /* 增加点击区域 */
+    margin: 0 5px; /* 增加间距 */
+}
+.nav-box {
+    transition: 
+        width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        background-color 0.3s ease; /* 添加颜色过渡效果 */
+}
+
+/* 美化网站介绍区块滚动条为透明磨砂风格 */
+.side-card ul,
+.content-card > div,
+.log-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.35) rgba(255,255,255,0.08);
+}
+.side-card ul::-webkit-scrollbar,
+.content-card > div::-webkit-scrollbar,
+.log-scroll::-webkit-scrollbar {
+    width: 8px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 8px;
+}
+.side-card ul::-webkit-scrollbar-thumb,
+.content-card > div::-webkit-scrollbar-thumb,
+.log-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.35);
+    backdrop-filter: blur(6px) saturate(120%);
+    -webkit-backdrop-filter: blur(6px) saturate(120%);
+    border-radius: 8px;
+    border: 2px solid rgba(255,255,255,0.12);
+}
+.side-card ul::-webkit-scrollbar-track,
+.content-card > div::-webkit-scrollbar-track,
+.log-scroll::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.08);
+    border-radius: 8px;
+}
+/* 修改的主要内容区域样式 */
+        .main-content {
+            position: relative;
+            z-index: 1;
+            height: 100vh;
+            scroll-snap-align: start;
+            background: #f8f9fa url('DSC08853.JPG') center center/cover no-repeat;
+            padding: 20px; /* 简化padding */
+            display: flex;
+            align-items: center; /* 垂直居中 */
+            justify-content: center; /* 水平居中 */
+        }
+
+        /* 新增居中容器 */
+        .card-container {
+            display: flex;
+            align-items: center; /* 垂直居中 */
+            justify-content: center; /* 水平居中 */
+            gap: 32px;
+            max-width: 1400px;
+            width: 90%;
+            margin: 0 auto;
+            height: 100%; /* 继承父级高度 */
+        }
+
+        /* 调整卡片样式 */
+        .side-card, .content-card {
+            flex: 0 1 500px;
+            min-width: 280px;
+            max-width: 380px;
+            height: 70vh; /* 与.content-card高度一致 */
+            max-height: 600px;
+            background: rgba(255,255,255,0.18);
+            border-radius: 16px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+            backdrop-filter: blur(10px) saturate(160%);
+            border: 1px solid rgba(255,255,255,0.18);
+            padding: 24px;
+            margin: auto 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-card {
+            flex: 0 1 500px;
+            height: 70vh; /* 稍高于两侧卡片 */
+            max-height: 600px;
+            padding: 40px;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 1100px) {
+            .card-container {
+                flex-wrap: wrap;
+                align-content: center; /* 多行垂直居中 */
+                height: auto;
+            }
+            
+            .side-card {
+                height: 40vh;
+                max-height: 300px;
+            }
+            
+            .content-card {
+                height: 50vh;
+                max-height: 400px;
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .side-card, .content-card {
+                width: 100%;
+                height: auto;
+                max-height: none;
+                min-height: 200px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="scroll-container">
+        <section class="hero-section">
+            <video autoplay muted loop src="微信视频2025-05-22_135851_819.mp4"></video>
+            
+            <!-- 导航栏 -->
+    <nav class="nav">
+    <ul>
+        <li><a href="首页.html" data-color="#1976D2">首页</a></li>
+        <li><a href="团队介绍.html" data-color="#4CAF50">团队介绍</a></li>
+        <li><a href="团队所在学校介绍.html" data-color="#FF9800">团队所在学校</a></li>
+        <li><a href="推荐软件下载.html" data-color="#E91E63">学校信息查看</a></li>
+    </ul>
+    <div class="nav-box"></div>
+</nav>
+
+            <!-- 打字机效果 -->
+            <div class="tribute-container">
+                <div class="tribute-text">致敬在环城路43号热爱数码的你</div>
+            </div>
+        </section>
+
+        <!-- 网站介绍 -->
+        <main class="main-content" style="display: flex; gap: 32px; align-items: stretch; justify-content: center;">
+            <div class="side-card left-card">
+                <h2>联系方式</h2>
+                <ul style="line-height:1.8;font-size:1em;list-style:none;padding:0;margin:0;max-height:180px;overflow:auto;">
+                    <li>邮箱：tang2008vip@126.com</li>
+                    
+                    <li>地址：广东省河源市紫金县紫金中学</li>
+                </ul>
+            </div>
+            <div class="content-card">
+                <h1 style="font-size:2.8em;margin-bottom:30px;color:#111;">网站介绍</h1>
+                <div style="line-height:1.8;font-size:1.1em;color:#4a4a4a;">
+                    <p>紫金山实验室官方下载平台，致力于为科研工作者提供：</p>
+                    <ul style="margin-top:15px;">
+                        <li>最新科研工具资源</li>
+                        <li>高效协作平台</li>
+                        <li>专业技术支持</li>
+                        <li>安全下载服务</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="side-card right-card">
+                <h2>更新日志</h2>
+                <!-- 去掉log-scroll容器，ul直接放在side-card内 -->
+                <ul style="line-height:1.8;font-size:1em;list-style:none;padding:0;margin:0;">
+                    
+                    <li><b>2025-05-28</b> 新增网站的团队介绍</li>
+                    <li><b>2025-05-28</b> 新增网站介绍左右信息框</li>
+                    <li><b>2025-05-27</b> 优化首页磨砂与导航栏效果</li>
+                    <li><b>2025-05-25</b> 增加软件下载页面</li>
+                    <li><b>2025-05-20</b> 网站上线</li>
+                    <li><b>2025-05-18</b> 完成初版设计</li>
+                    <li><b>2025-05-15</b> 项目启动</li>
+                </ul>
+            </div>
+        </main>
+    </div>
+
+    <!-- 修改JavaScript部分 -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // 调试输出
+    console.log('初始化开始...');
+
+    // 获取元素引用
+    const heroSection = document.querySelector('.hero-section');
+    const contentCard = document.querySelector('.content-card');
+    const nav = document.querySelector('.nav');
+    const navLinks = document.querySelectorAll('.nav a');
+    const navBox = document.querySelector('.nav-box');
+
+    // 元素存在性检查
+    if (!heroSection || !contentCard || !nav) {
+        console.error('关键元素未找到!');
+        return;
+    }
+
+    // 立即显示内容卡片（测试用）
+    contentCard.style.opacity = '1';
+    contentCard.style.transform = 'translateY(0)';
+    
+    // 滚动处理函数
+    const handleScroll = () => {
+        const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+        const heroHeight = heroSection.offsetHeight;
+        const triggerPoint = heroHeight * 0.6;
+
+        console.log(`当前滚动位置: ${currentScroll}, 触发点: ${triggerPoint}`);
+
+        // 强制触发卡片显示
+        contentCard.classList.add('active');
+    };
+
+    // 初始化执行
+    handleScroll();
+
+    // 滚动监听（简化版）
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // 其他代码保持不变...
+    document.addEventListener('DOMContentLoaded', () => {
+    // 初始化导航指示条
+    const nav = document.querySelector('.nav');
+    const navBox = document.querySelector('.nav-box');
+    const navLinks = document.querySelectorAll('.nav a');
+    
+    // 设置初始激活状态
+    function setInitialIndicator() {
+        const firstLink = navLinks[0];
+        navBox.style.width = `${firstLink.offsetWidth}px`;
+        navBox.style.left = `${firstLink.offsetLeft}px`;
+    }
+
+    // 绑定导航交互
+    navLinks.forEach(link => {
+        link.addEventListener('mouseenter', () => {
+            navBox.style.width = `${link.offsetWidth + 10}px`; // 增加10px缓冲
+            navBox.style.left = `${link.offsetLeft - 5}px`; // 微调居中
+        });
+        
+        link.addEventListener('mouseleave', setInitialIndicator);
+    });
+
+    // 初始化执行
+    setInitialIndicator();
+    
+    // 窗口大小变化时重置
+    window.addEventListener('resize', setInitialIndicator);
+});
+});
+document.addEventListener('DOMContentLoaded', () => {
+    // 导航栏指示条控制
+    const nav = document.querySelector('.nav');
+    const navBox = document.querySelector('.nav-box');
+    const navLinks = document.querySelectorAll('.nav a');
+    
+    // 获取导航栏位置信息
+    const getNavPosition = () => {
+        const navRect = nav.getBoundingClientRect();
+        return {
+            left: navRect.left,
+            width: navRect.width
+        };
+    };
+
+    // 更新指示条位置
+    const updateIndicator = (link) => {
+        const linkRect = link.getBoundingClientRect();
+        const navPos = getNavPosition();
+        
+        // 计算相对位置
+        const relativeLeft = linkRect.left - navPos.left;
+        const absoluteLeft = relativeLeft + (link.offsetWidth - navBox.offsetWidth)/2;
+        
+        navBox.style.cssText = `
+            width: ${link.offsetWidth}px;
+            left: ${relativeLeft}px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        `;
+    };
+
+    // 设置初始状态
+    const initIndicator = () => {
+        const firstLink = navLinks[0];
+        navBox.style.opacity = '1'; // 确保可见
+        updateIndicator(firstLink);
+    };
+
+    // 绑定事件
+    navLinks.forEach(link => {
+        link.addEventListener('mouseenter', () => updateIndicator(link));
+        link.addEventListener('mouseleave', initIndicator);
+    });
+
+    // 窗口resize处理
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(initIndicator, 200);
+    });
+
+    // 初始化
+    initIndicator();
+});
+document.addEventListener('DOMContentLoaded', () => {
+    const navLinks = document.querySelectorAll('.nav a');
+    const navBox = document.querySelector('.nav-box');
+
+    // 存储默认颜色
+    let defaultColor = '#FFD600';
+
+    // 设置初始颜色
+    navBox.style.backgroundColor = defaultColor;
+
+    navLinks.forEach(link => {
+        // 获取自定义颜色
+        const color = link.dataset.color || defaultColor;
+        
+        link.addEventListener('mouseenter', () => {
+            // 更新指示条颜色
+            navBox.style.backgroundColor = color;
+            // 其他位置调整代码...
+        });
+
+        link.addEventListener('mouseleave', () => {
+            // 恢复默认颜色
+            navBox.style.backgroundColor = defaultColor;
+        });
+    });
+});
+document.addEventListener('DOMContentLoaded', () => {
+    // 新增：上下键切换模块特效
+    // 只考虑滚动容器内的section和main.main-content
+    const scrollContainer = document.querySelector('.scroll-container');
+    const sections = Array.from(scrollContainer.querySelectorAll('section, main.main-content'));
+    let currentIndex = 0;
+    let isScrolling = false;
+    let scrollTimeout = null;
+
+    function goToSection(idx) {
+        const newIndex = Math.max(0, Math.min(idx, sections.length - 1));
+        if (newIndex !== currentIndex) {
+            isScrolling = true;
+            currentIndex = newIndex;
+            const target = sections[currentIndex];
+            // 只滚动scroll-container内部
+            scrollContainer.scrollTo({
+                top: target.offsetTop - scrollContainer.offsetTop,
+                behavior: 'smooth'
+            });
+            if (scrollTimeout) clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                isScrolling = false;
+            }, 700);
+        }
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if (isScrolling) return;
+        if (
+            ["ArrowDown", "ArrowRight", "PageDown", "s", "S", "j", "J"].includes(e.key)
+        ) {
+            e.preventDefault();
+            goToSection(currentIndex + 1);
+        } else if (
+            ["ArrowUp", "ArrowLeft", "PageUp", "w", "W", "k", "K"].includes(e.key)
+        ) {
+            e.preventDefault();
+            goToSection(currentIndex - 1);
+        }
+    });
+});
+</script>
+</body>
+</html>

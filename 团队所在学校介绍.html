@@ -1,0 +1,1883 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>紫金山下载站</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: url('DSC08853.JPG') fixed;
+            background-size: cover;
+            background-color: #181c24;
+            padding-top: 100px;
+            /* 为导航栏留出空间 */
+        }
+
+        /* 导航栏样式 */
+       .nav {
+            width: 90%;
+            max-width: 1200px;
+            padding: 15px 0;
+            background: rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(200px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            /* 保证导航栏始终在最上方 */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            overflow: visible;
+        }
+
+         .nav ul {
+            display: flex;
+            justify-content: space-around;
+            list-style: none;
+            padding: 0 10px;
+            margin: 0;
+        }
+
+        .nav a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-size: 18px;
+            padding: 12px 28px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .nav a:hover {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.1), 
+                rgba(255, 255, 255, 0.05));
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .nav-box {
+            position: absolute;
+            bottom: 0;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                rgba(255, 255, 255, 0.15), 
+                rgba(255, 255, 255, 0.3));
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 2px;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+        }
+        /* 下拉菜单样式 */
+        .dropdown { position: relative; }
+
+        .submenu {
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            /* 完整透明磨砂，匹配导航栏视觉 */
+            background: linear-gradient(
+                to right,
+                rgba(223, 226, 228, 0.3),
+                rgba(223, 226, 228, 0.3)
+            );
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 6px 4px;
+            min-width: 180px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18), inset 0 0 12px rgba(255,255,255,0.03);
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.18s ease, transform 0.18s ease;
+            pointer-events: none;
+            z-index: 10001;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+
+        .submenu a {
+            color: rgba(255,255,255,0.95);
+            text-decoration: none;
+            padding: 8px 14px;
+            display: block;
+            font-size: 15px;
+            border-radius: 6px;
+        }
+
+        .submenu a:hover { background: rgba(255,255,255,0.06); }
+
+        .dropdown.open .submenu { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+        @media (max-width: 768px) {
+            .submenu { left: 0; }
+        }
+        /* 内容模块样式 */
+        .content-section {
+            margin: 40px auto;
+            /* 调整间距 */
+            width: 90%;
+            max-width: 1200px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.4s ease;
+            min-height: calc(100vh - 160px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent !important;
+        }
+
+        .content-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .frosted-box {
+            color: rgba(255, 255, 255, 0.95) ;
+            background:  rgba(255, 255, 255, 0.1) !important;/*gai*/
+            backdrop-filter: blur(12px) saturate(160%);
+            -webkit-backdrop-filter: blur(12px) saturate(160%);
+            border: 1px solid rgba(255, 255, 255, 0.13);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(235, 234, 234, 0.13);
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 60vh;
+        }
+
+        .team-content h2 {
+            font-size: 2.4rem;
+            margin-bottom: 1.5rem;
+            margin-top: -1.2rem;
+            color: #fff;
+            
+            padding-left: 20px;
+            text-align: left;
+            align-self: flex-start;
+        }
+
+        .content-section:not(:nth-of-type(1)):not(:nth-of-type(2)) .team-content h2 {
+            position: absolute;
+            top: 32px;
+            left: 40px;
+            margin-top: 0;
+            margin-bottom: 0.8rem;
+            padding-left: 16px;
+            z-index: 2;
+            background: none;
+            border-radius: 0;
+            text-align: left;
+            align-self: flex-start;
+        }
+
+        .content-section:last-of-type .team-content h2 {
+            left: 52px;
+            top: 32px;
+        }
+
+        .content-section:nth-last-of-type(2) .team-content h2 {
+            left: 52px;
+            top: 32px;
+        }
+
+        .content-section:not(:nth-of-type(1)):not(:nth-of-type(2)) .frosted-box {
+            position: relative;
+        }
+
+        .content-section:not(:nth-of-type(1)):not(:nth-of-type(2)) .team-content {
+            position: relative;
+            padding-top: 2.8rem;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 80px;
+            }
+
+            .nav a {
+                font-size: 16px;
+                padding: 8px 15px;
+            }
+
+            .frosted-box {
+                padding: 25px;
+            }
+
+            .team-content h2 {
+                font-size: 1.8rem;
+                margin-top: -0.8rem;
+            }
+
+            .content-section:not(:nth-of-type(1)):not(:nth-of-type(2)) .team-content h2 {
+                top: 18px;
+                left: 12px;
+                font-size: 1.2rem;
+                padding-left: 10px;
+            }
+
+            .content-section:last-of-type .team-content h2 {
+                left: 20px;
+                top: 18px;
+            }
+
+            .content-section:nth-last-of-type(2) .team-content h2 {
+                left: 20px;
+                top: 18px;
+            }
+
+            .content-section:not(:nth-of-type(1)):not(:nth-of-type(2)) .team-content {
+                padding-top: 2.2rem;
+            }
+        }
+
+        .image-container {
+            margin: 25px 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .image-container:hover {
+            transform: translateY(-3px);
+        }
+
+        .image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .image-container {
+                margin: 15px 0;
+                border-radius: 10px;
+            }
+        }
+
+        .compare-layout {
+            display: block;
+            gap: 0;
+            align-items: stretch;
+            width: 100%;
+        }
+
+        .compare-scroller {
+            overflow-x: hidden;
+            overflow-y: hidden;
+            padding-bottom: 8px;
+            cursor: grab;
+        }
+
+        .compare-track {
+            display: flex;
+            align-items: stretch;
+            gap: 22px;
+            width: max-content;
+            animation: compare-marquee 24s linear infinite;
+        }
+
+        .compare-scroller:hover .compare-track {
+            animation-play-state: paused;
+        }
+
+        @keyframes compare-marquee {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-50%);
+            }
+        }
+
+        .compare-grid {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(330px, 1fr));
+            gap: 22px;
+            margin-top: 14px;
+            align-items: stretch;
+            min-width: max-content;
+        }
+
+        .compare-item {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            height: 100%;
+            min-width: 0;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 22px;
+            padding: 18px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .compare-caption {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.92);
+            margin-bottom: 14px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            line-height: 1.35;
+            white-space: nowrap;
+        }
+
+        .compare-slider {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            min-height: 340px;
+            flex: 1;
+            overflow: hidden;
+            border-radius: 18px;
+            background: #0f172a;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+            user-select: none;
+            touch-action: pan-y;
+        }
+
+        .compare-slider img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .compare-overlay {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            width: 50%;
+        }
+
+        .compare-overlay img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .compare-handle {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 3px;
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateX(-50%);
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
+            pointer-events: none;
+        }
+
+        .compare-handle::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.92);
+            transform: translate(-50%, -50%);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.24);
+        }
+
+        .compare-handle::after {
+            content: "↔";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.05rem;
+            color: #102542;
+            font-weight: 900;
+            z-index: 2;
+        }
+
+        .compare-range {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: ew-resize;
+            z-index: 3;
+        }
+
+        .compare-actions {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 5;
+            margin: 0;
+        }
+
+        .compare-fullscreen-btn {
+            border: none;
+            border-radius: 999px;
+            padding: 8px 14px;
+            background: rgba(0, 0, 0, 0.56);
+            color: #fff;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+            transition: transform 0.18s ease, background 0.18s ease;
+        }
+
+        .compare-fullscreen-btn:hover {
+            transform: translateY(-1px);
+            background: rgba(0, 0, 0, 0.78);
+        }
+
+        .compare-slider {
+            cursor: zoom-in;
+        }
+
+        .compare-fullscreen-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            background: rgba(2, 6, 23, 0.94);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .compare-fullscreen-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .compare-fullscreen-modal {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            max-height: 100vh;
+            padding: 0;
+            border-radius: 0;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .compare-fullscreen-close {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            width: 44px;
+            height: 44px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.92);
+            color: #102542;
+            font-size: 1.55rem;
+            font-weight: 900;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .compare-fullscreen-body {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .compare-fullscreen-body .compare-slider {
+            width: 100vw;
+            height: 100vh;
+            min-height: 100vh;
+            aspect-ratio: auto;
+            border-radius: 0;
+            box-shadow: none;
+            background: #020617;
+        }
+
+        .team-content {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .image-container {
+            flex: 0 0 45%;
+            max-width: 600px;
+            margin: 0;
+        }
+
+        .text-content {
+            flex: 1;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        @media (max-width: 1200px) {
+            .team-content {
+                gap: 30px;
+            }
+
+            .image-container img {
+                height: 250px;
+            }
+        }
+
+        @media (max-width: 1600px) {
+            .compare-grid {
+                grid-template-columns: repeat(6, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .compare-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .compare-slider {
+                min-height: 260px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .compare-grid {
+                grid-template-columns: repeat(6, minmax(220px, 1fr));
+            }
+
+            .team-content {
+                flex-direction: column;
+            }
+
+            .image-container {
+                flex: none;
+                width: 100%;
+                max-width: 500px;
+            }
+
+            .image-container img {
+                height: 200px;
+            }
+
+            .compare-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .compare-slider {
+                min-height: 240px;
+            }
+        }
+
+        .text-content p {
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .text-content p {
+                font-size: 1rem;
+            }
+        }
+
+        .shell {
+            width: 90%;
+            height: 500px;
+            display: flex;
+            margin-top: 0rem;
+        }
+
+        .box {
+            border-radius: 10px;
+            flex: 1;
+            overflow: hidden;
+            transition: flex-basis 0.13s cubic-bezier(0.4, 0, 0.2, 1);
+            margin: 0 20px;
+            box-shadow: rgb(0, 0, 5);
+            border: 10px solid #fff;
+            background-color: #fff;
+        }
+
+        .box>img {
+            border-radius: 10px;
+            width: 100%;
+            height: 85%;
+            object-fit: cover;
+            transition: .5s;
+        }
+
+        .box>span {
+            font: 200 45px;
+            text-align: center;
+            height: 15%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .box:hover {
+            flex-basis: 40%;
+        }
+
+        /* 3D轮播样式 */
+        .carousel-3d-container {
+            width: 100%;
+            height: 400px;
+            perspective: 1000px;
+            margin: 3rem auto;
+            position: relative;
+        }
+        
+        .carousel-hint {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+        }
+        
+        .carousel-3d-container:hover .carousel-hint {
+            opacity: 1;
+        }
+
+        .carousel-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            animation: carousel-rotate 20s infinite linear;
+        }
+        
+        .carousel-3d-container.paused .carousel-wrapper {
+            animation-play-state: paused;
+        }
+
+        .carousel {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+        }
+
+        .carousel-item {
+            position: absolute;
+            width: 280px;
+            height: 180px;
+            top: 50%;
+            left: 50%;
+            margin: -90px 0 0 -140px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.5s ease;
+        }
+
+        .carousel-item:nth-child(1) {
+            transform: rotateY(0deg) translateZ(350px);
+        }
+
+        .carousel-item:nth-child(2) {
+            transform: rotateY(60deg) translateZ(350px);
+        }
+
+        .carousel-item:nth-child(3) {
+            transform: rotateY(120deg) translateZ(350px);
+        }
+
+        .carousel-item:nth-child(4) {
+            transform: rotateY(180deg) translateZ(350px);
+        }
+
+        .carousel-item:nth-child(5) {
+            transform: rotateY(240deg) translateZ(350px);
+        }
+
+        .carousel-item:nth-child(6) {
+            transform: rotateY(300deg) translateZ(350px);
+        }
+       
+
+        @keyframes carousel-rotate {
+            0% {
+                transform: rotateY(0deg);
+            }
+
+            100% {
+                transform: rotateY(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .carousel-3d-container {
+                height: 300px;
+                perspective: 800px;
+            }
+
+            .carousel-item {
+                width: 200px;
+                height: 130px;
+                margin: -65px 0 0 -100px;
+            }
+        }
+
+        /* iOS 卡包式校史时间轴 */
+        .history-player {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding-top: 1rem;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        #campus-history > .frosted-box > .team-content > h2 {
+            margin: 0 0 18px 0;
+            color: #fff;
+            text-shadow: 0 1px 18px rgba(0, 0, 0, 0.5);
+        }
+
+        .history-player:fullscreen::before,
+        .history-player:-webkit-full-screen::before {
+            content: '校园校史';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            margin: 0;
+            font-size: 2rem;
+            color: #fff;
+            text-shadow: 0 2px 24px rgba(0, 0, 0, 0.7);
+            z-index: 4;
+        }
+
+        .fullscreen-toggle {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            z-index: 5;
+            border: none;
+            background: rgba(0, 0, 0, 0.55);
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 999px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .fullscreen-toggle:hover {
+            background: rgba(0, 0, 0, 0.75);
+            transform: translateY(-1px);
+        }
+
+        .history-player:fullscreen,
+        .history-player:-webkit-full-screen {
+            background: url('DSC08853.JPG') fixed center/cover no-repeat;
+            background-size: cover;
+        }
+
+        .history-player.fullscreen .card-stack-scroller,
+        .history-player:fullscreen .card-stack-scroller,
+        .history-player:-webkit-full-screen .card-stack-scroller {
+            height: calc(100vh - 3.5rem);
+            min-height: auto;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+        }
+
+        .card-stack-scroller {
+            margin-top: 1rem;
+            overflow: hidden;
+            height: 560px;
+            position: relative;
+            border-radius: 24px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+            padding: 18px 12px;
+            perspective: 1200px;
+        }
+
+        .card-stack-track {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            align-items: center;
+            animation: card-stack-scroll 16s linear infinite;
+            will-change: transform;
+        }
+
+        .card-stack-item {
+            width: min(92%, 640px);
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 18px 22px;
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #233145;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
+            border: 1px solid rgba(255,255,255,0.7);
+            transform-origin: center center;
+            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1), filter 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+            align-self: center;
+            opacity: 1;
+            filter: blur(0px);
+            will-change: transform, opacity, filter;
+            position: relative;
+        }
+
+        .card-stack-item strong {
+            display: block;
+            font-size: 1rem;
+            color: #1f4e79;
+            margin-bottom: 6px;
+        }
+
+        .card-stack-item span {
+            display: block;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: #44546a;
+        }
+
+        .card-stack-item:nth-child(odd) {
+            transform: rotateY(-6deg) translateX(0);
+        }
+
+        .card-stack-item:nth-child(even) {
+            transform: rotateY(6deg) translateX(0);
+        }
+
+        .card-stack-item:nth-child(1) { margin-top: 4px; }
+        .card-stack-item:nth-child(2) { margin-top: 0; }
+        .card-stack-item:nth-child(3) { margin-top: 0; }
+        .card-stack-item:nth-child(4) { margin-top: 0; }
+        .card-stack-item:nth-child(5) { margin-top: 0; }
+        .card-stack-item:nth-child(6) { margin-top: 0; }
+        .card-stack-item:nth-child(7) { margin-top: 0; }
+        .card-stack-item:nth-child(8) { margin-top: 0; }
+
+        @keyframes card-stack-scroll {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(-50%);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .card-stack-scroller {
+                height: 460px;
+            }
+
+            .card-stack-item {
+                width: 100%;
+                padding: 14px 16px;
+            }
+
+            .card-stack-item:nth-child(n) {
+                margin-left: 0;
+                transform: none;
+            }
+        }
+
+        /* 隐藏滚动条 */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* 优化滚动性能 */
+        .content-section {
+            will-change: transform;
+        }
+
+        /* 导航栏定位优化 */
+        .nav {
+            top: 20px !important;
+            /* 强制覆盖可能的样式冲突 */
+            z-index: 9999;
+            /* 确保导航栏始终在最上层 */
+        }
+
+        /* 动态计算内容区域顶部间距 */
+        body {
+            padding-top: calc(20px + 60px);
+            /* 20px导航栏top + 60px导航栏高度 */
+        }
+
+        /* 响应式断点修正 */
+        @media (max-width: 768px) {
+            .nav {
+                top: 15px !important;
+                /* 移动端缩小顶部间距 */
+            }
+
+            body {
+                padding-top: calc(15px + 50px);
+                /* 适配移动端导航栏高度 */
+            }
+        }
+
+        /* 移除过渡冲突 */
+        .nav a {
+            transition: none !important;
+            /* 移除可能导致偏移的过渡效果 */
+        }
+
+        /* 强制内容区域定位 */
+        .content-section {
+            scroll-margin-top: 80px;
+            /* 确保滚动时内容避开导航栏 */
+        }
+        
+        /* 新增提示样式 */
+        .hint-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 5;
+            border-radius: 10px;
+        }
+        
+        .hint-text {
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+        }
+        
+        .carousel-item:hover .hint-overlay {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 导航栏 -->
+    <nav class="nav">
+        <ul>
+            <li><a href="首页.html" data-color="#1976D2">首页</a></li>
+            <li class="dropdown">
+                <a href="团队介绍.html" data-color="#4CAF50">团队介绍</a>
+                <ul class="submenu">
+                    <li><a href="团队介绍.html#team" data-color="#4CAF50">概述</a></li>
+                    <li><a href="团队介绍.html#departments" data-color="#4CAF50">部门架构</a></li>
+                    <li><a href="团队介绍.html#works" data-color="#4CAF50">团队作品</a></li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a href="团队所在学校介绍.html" data-color="#FF9800">团队所在学校</a>
+                <ul class="submenu">
+                    <li><a href="#campus-intro" data-color="#FF9800">校园简介</a></li>
+                    <li><a href="#campus-location" data-color="#FF9800">校园地理位置</a></li>
+                    <li><a href="#teaching-building" data-color="#FF9800">教学楼</a></li>
+                    <li><a href="#campus-history" data-color="#FF9800">校园校史</a></li>
+                    <li><a href="#campus-activities" data-color="#FF9800">校园活动</a></li>
+                    <li><a href="#campus-scenery" data-color="#FF9800">校园风景</a></li>
+                    <li><a href="#campus-books" data-color="#FF9800">校史书籍</a></li>
+                    <li><a href="#campus-recap" data-color="#FF9800">十大歌手回看</a></li>
+                </ul>
+            </li>
+            <li><a href="推荐软件下载.html" data-color="#E91E63">学校信息查看</a></li>
+        </ul>
+        <div class="nav-box"></div>
+    </nav>
+
+    <!-- 内容区域 -->
+    <section class="content-section" id="campus-intro">
+        <div class="frosted-box">
+                        <div class="team-content">
+                <h2
+                    style="margin:0px 0px 12.8px 0px; padding-left:20px; position:static; left:auto; top:auto; z-index:auto; background:none; border-radius:0; text-align:left; align-self:flex-start;">
+                    校园简介</h2>
+                <div class="team-description"></div>
+            </div>
+            <div class="team-content">
+                <div class="image-container">
+                    <img src="t01cc345ff02aafd9fe.jpg" alt="紫金中学全景">
+                </div>
+                <div class="text-content">
+                    
+                    <p>广东省紫金中学始建于1902年，坐落于河源市紫金县紫金山麓，是广东省首批重点中学。学校以"明德笃学、求是创新"为校训，历经百年积淀，形成科技教育与人文素养并重的办学特色。校园占地200余亩，拥有现代化教学楼、实验中心和文体场馆，开设多元校本课程，每年举办科技节、艺术周等特色活动，培养了大批优秀学子。先后获评"全国青少年科技教育先进学校""广东省绿色学校"等称号，是粤东地区具有影响力的百年名校。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        // 简单脚本：管理下拉 open 状态（mouseenter/leave + 移动端点击切换）
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.nav .dropdown').forEach(function(drop) {
+                var link = drop.querySelector(':scope > a');
+                var timer = null;
+                function open() {
+                    if (timer) { clearTimeout(timer); timer = null; }
+                    drop.classList.add('open');
+                }
+                function close() {
+                    if (timer) clearTimeout(timer);
+                    timer = setTimeout(function(){ drop.classList.remove('open'); }, 160);
+                }
+                drop.addEventListener('mouseenter', open);
+                drop.addEventListener('mouseleave', close);
+
+                // 移动端：点击触发器切换下拉显示，防止立即导航
+                link.addEventListener('click', function(e){
+                    if (window.matchMedia && window.matchMedia('(max-width: 768px)').matches) {
+                        e.preventDefault();
+                        drop.classList.toggle('open');
+                    }
+                });
+            });
+        });
+    </script>
+    <section class="content-section" id="campus-location">
+        <div class="frosted-box">
+                        <div class="team-content">
+                <h2
+                    style="margin:30px 0px 12.8px 0px; padding-left:20px; position:static; left:auto; top:auto; z-index:auto; background:none; border-radius:0; text-align:left; align-self:flex-start;">
+                    校园地理位置</h2>
+                <div class="team-description"></div>
+            </div>
+            <div class="team-content">
+                <div class="image-container">
+                    <img src="wechat_2025-05-26_133012_357.png" alt="紫金中学全景">
+                </div>
+                <div class="text-content">
+                    
+                    <p>广东省紫金中学位于河源市紫金县紫城镇金山大道西侧，毗邻紫金县文化体育广场，坐落在紫金山南麓。学校地处县城核心区域，距县政府约1.5公里，周边环绕紫金公园、县人民医院等生活配套，环境清幽且交通便利。校门正对金山大道主干道，多路公交经停"紫金中学站"，距紫金汽车客运站仅3公里，广龙高速紫金出口约15分钟车程，依山傍水的地理位置既保障教学宁静，又兼具城市发展活力。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+   
+
+    <section class="content-section" id="teaching-building">
+        <div class="frosted-box">
+            <div class="team-content">
+                <h2
+                    style="margin:0px 0px 12.8px 0px; padding-left:20px; position:static; left:auto; top:auto; z-index:auto; background:none; border-radius:0; text-align:left; align-self:flex-start;">
+                    教学楼</h2>
+                <div class="team-description"></div>
+            </div>
+            <div class="shell">
+                <div class="box">
+                    <img src="教学楼/科教楼.JPG">
+                    <span style="color:#222;font-size:1.2rem;font-weight:bold;">科教楼</span>
+                </div>
+                <div class="box">
+                    <img src="教学楼/旧图书馆.JPG">
+                    <span style="color:#222;font-size:1.2rem;font-weight:bold;">旧图书馆</span>
+                </div>
+                <div class="box">
+                    <img src="教学楼/行政楼.JPG">
+                    <span style="color:#222;font-size:1.2rem;font-weight:bold;">行政楼</span>
+                </div>
+                <div class="box">
+                    <img src="教学楼/松源堂.JPG">
+                    <span style="color:#222;font-size:1.2rem;font-weight:bold;">松年堂</span>
+                </div>
+                <div class="box">
+                    <img src="教学楼/二号楼.JPG">
+                    <span style="color:#222;font-size:1.2rem;font-weight:bold;">二号楼</span>
+                </div>
+                <div class="box">
+                    <img src="教学楼/3号楼.JPG">
+                    <span style="color:#222;font-size:1.2rem;font-weight:bold;">三号楼</span>
+                </div>
+                <div class="box">
+                    <img src="教学楼/5号楼.JPG">
+                    <span style="color:#222;font-size:1.2rem;font-weight:bold;">五号楼</span>
+                </div>
+                <div class="box">
+                    <img src="教学楼/文笔堂.JPG">
+                    <span style="color:#222;font-size:1.2rem;font-weight:bold;">文笔堂</span>
+                </div>
+                <div class="box">
+                    <img src="教学楼/冠门楼 (2).JPG">
+                    <span style="color:#222;font-size:1.2rem;font-weight:bold;">冠门楼</span>
+                </div>
+                <div class="box">
+                    <img src="教学楼/林西照.JPG">
+                    <span style="color:#222;font-size:1.2rem;font-weight:bold;">林西照</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section" id="campus-history">
+        <div class="frosted-box">
+            <div class="team-content">
+                <h2
+                    style="margin:0px 0px 12.8px 0px; padding-left:20px; position:static; left:auto; top:auto; z-index:auto; background:none; border-radius:0; text-align:left; align-self:flex-start;">
+                    校园校史</h2>
+                <div class="history-player">
+                    <button class="fullscreen-toggle" type="button">全屏</button>
+                    <div class="card-stack-scroller">
+                        <div class="card-stack-track">
+                            <div class="card-stack-item">
+                                <strong>1926年秋</strong>
+                                <span>紫金县立初级中学创办，开启学校百年办学历程。</span>
+                            </div>
+                        <div class="card-stack-item">
+                            <strong>1944年9月</strong>
+                            <span>学校开办高中部，正式发展为完全中学。</span>
+                        </div>
+                        <div class="card-stack-item">
+                            <strong>20世纪60年代</strong>
+                            <span>学校曾荣获中南五省红旗学校称号，声名远播。</span>
+                        </div>
+                        <div class="card-stack-item">
+                            <strong>80年代初</strong>
+                            <span>被列为广东省重点中学之一，恢复高考后频创佳绩。</span>
+                        </div>
+                        <div class="card-stack-item">
+                            <strong>90年代</strong>
+                            <span>先后获评国家级及省级教育先进单位，办学水平持续提升。</span>
+                        </div>
+                        <div class="card-stack-item">
+                            <strong>2006年</strong>
+                            <span>学校晋升为广东省一级学校，迈入更高发展阶段。</span>
+                        </div>
+                        <div class="card-stack-item">
+                            <strong>2007年12月</strong>
+                            <span>通过国家级示范性普通高中验收，获得优秀学校称号。</span>
+                        </div>
+                        <div class="card-stack-item">
+                            <strong>2021年8月</strong>
+                            <span>开启委托办学新模式，持续焕发新的教育活力。</span>
+                        </div>
+                        <div class="card-stack-item">
+                            <strong>1926年秋</strong>
+                            <span>紫金县立初级中学创办，开启学校百年办学历程。</span>
+                        </div>
+                        <div class="card-stack-item">
+                            <strong>1944年9月</strong>
+                            <span>学校开办高中部，正式发展为完全中学。</span>
+                        </div>
+                        <div class="card-stack-item">
+                            <strong>20世纪60年代</strong>
+                            <span>学校曾荣获中南五省红旗学校称号，声名远播。</span>
+                        </div>
+                        <div class="card-stack-item">
+                            <strong>80年代初</strong>
+                            <span>被列为广东省重点中学之一，恢复高考后频创佳绩。</span>
+                        </div>
+                        <div class="card-stack-item">
+                            <strong>90年代</strong>
+                            <span>先后获评国家级及省级教育先进单位，办学水平持续提升。</span>
+                        </div>
+                        <div class="card-stack-item">
+                            <strong>2006年</strong>
+                            <span>学校晋升为广东省一级学校，迈入更高发展阶段。</span>
+                        </div>
+                        <div class="card-stack-item">
+                            <strong>2007年12月</strong>
+                            <span>通过国家级示范性普通高中验收，获得优秀学校称号。</span>
+                        </div>
+                        <div class="card-stack-item">
+                            <strong>2021年8月</strong>
+                            <span>开启委托办学新模式，持续焕发新的教育活力。</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section" id="campus-activities">
+        <div class="frosted-box">
+            <div class="team-content">
+                <h2
+                    style="margin:0px 0px 12.8px 0px; padding-left:20px; position:static; left:auto; top:auto; z-index:auto; background:none; border-radius:0; text-align:left; align-self:flex-start;">
+                    校园活动</h2>
+                <!-- 3D轮播结构 -->
+                <div class="carousel-3d-container" id="activities-carousel">
+                    <div class="carousel-wrapper">
+                        <div class="carousel">
+                            <div class="carousel-item" style="background-image:url('校园活动/微信图片_20250530223309.jpg');">
+                                
+                            </div>
+                            <div class="carousel-item" style="background-image:url('校园活动/微信图片_20250530223311.jpg');">
+                                
+                            </div>
+                            <div class="carousel-item" style="background-image:url('校园活动/微信图片_20250530223314.jpg');">
+                                
+                            </div>
+                            <div class="carousel-item" style="background-image:url('校园活动/微信图片_20250530223315.jpg');">
+                               
+                            </div>
+                            <div class="carousel-item" style="background-image:url('校园活动/微信图片_20250530223341.jpg');">
+                                
+                            </div>
+                            <div class="carousel-item" style="background-image:url('校园活动/微信图片_202505302233141.jpg');">
+                                
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+     <section class="content-section" id="campus-scenery">
+        <div class="frosted-box">
+            <div class="team-content">
+                <h2
+                    style="margin:0px 0px 12.8px 0px; padding-left:20px; position:static; left:auto; top:auto; z-index:auto; background:none; border-radius:0; text-align:left; align-self:flex-start;">
+                    校园风景</h2>
+                <!-- 3D轮播结构 -->
+                <div class="carousel-3d-container" id="activities-carousel">
+                    <div class="carousel-wrapper">
+                        <div class="carousel">
+                            <div class="carousel-item" style="background-image:url('校园风景/DJI_20250424132714_0132_D.jpg');">
+                                
+                            </div>
+                            <div class="carousel-item" style="background-image:url('校园风景/DJI_20250424132939_0136_D - 副本.jpg');">
+                                
+                            </div>
+                            <div class="carousel-item" style="background-image:url('校园风景/DJI_20250424133103_0138_D.jpg');">
+                                
+                            </div>
+                            <div class="carousel-item" style="background-image:url('校园风景/DJI_20250424133223_0140_D - 副本.jpg');">
+                               
+                            </div>
+                            <div class="carousel-item" style="background-image:url('校园风景/DJI_20250424133302_0141_D - 副本.jpg');">
+                                
+                            </div>
+                            <div class="carousel-item" style="background-image:url('校园风景/DJI_20250424133313_0142_D.jpg');">
+                                
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="content-section" id="campus-books">
+        <div class="frosted-box">
+            <div class="team-content">
+                <h2
+                    style="margin:0px 0px 12.8px 0px; padding-left:20px; position:static; left:auto; top:auto; z-index:auto; background:none; border-radius:0; text-align:left; align-self:flex-start;">
+                    在线阅读校史书籍</h2>
+                <div class="team-description" style="margin-top:30rem;">
+                    <!-- 校史书籍小模块1 -->
+                    <div
+                        style="display:flex;align-items:center;gap:24px;background:rgba(255,255,255,0.08);border-radius:10px;padding:24px 18px;margin-top:-28rem;box-shadow:0 2px 12px rgba(0,0,0,0.08);margin-bottom:24px;">
+                        <img src="wechat_2025-05-30_134325_553.png" alt="校史书籍封面"
+                            style="width:110px;height:150px;object-fit:cover;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.10);">
+                        <div>
+                            <h3 style="margin:0 0 10px 0;font-size:1.25rem;color:#f3f2ef;">《紫金中学校史》</h3>
+                            <p style="margin:0 0 8px 0;color:rgba(255,255,255,0.85);font-size:1rem;">
+                                本书详细记录了紫金中学自1926年创办以来的百年发展历程，涵盖重要历史事件、杰出校友、校园变迁等内容，是了解学校历史文化的重要资料。</p>
+                            <a href="校史书籍在线阅读.pdf" target="_blank"
+                                style="display:inline-block;margin-top:8px;padding:6px 18px;background:#FFD600;color:#222;font-weight:bold;border-radius:6px;text-decoration:none;transition:background 0.2s;">在线阅读</a>
+                        </div>
+                    </div>
+                    <!-- 校史书籍小模块2 -->
+                    <div
+                        style="display:flex;align-items:center;gap:24px;background:rgba(255,255,255,0.08);border-radius:10px;padding:24px 18px;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+                        <img src="校友风采封面.jpg" alt="校友风采封面"
+                            style="width:110px;height:150px;object-fit:cover;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.10);">
+                        <div>
+                            <h3 style="margin:0 0 10px 0;font-size:1.25rem;color:rgb(252, 251, 249);">《状元峰》</h3>
+                            <p style="margin:0 0 8px 0;color:rgba(255,255,255,0.85);font-size:1rem;">
+                                本书收录了紫金中学各届优秀校友的成长故事与成就展示，展现了紫中精神的传承与发扬，是激励在校学子奋发向上的精神读本。</p>
+                            <a href="校友风采录在线阅读.pdf" target="_blank"
+                                style="display:inline-block;margin-top:8px;padding:6px 18px;background:#FFD600;color:#222;font-weight:bold;border-radius:6px;text-decoration:none;transition:background 0.2s;">在线阅读</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section" id="campus-recap">
+        <div class="frosted-box">
+            <div class="team-content">
+                <h2
+                    style="margin:0px 0px 12.8px 0px; padding-left:20px; position:static; left:auto; top:auto; z-index:auto; background:none; border-radius:0; text-align:left; align-self:flex-start;">
+                    十大歌手回看</h2>
+                <div class="team-description" style="margin-top:30rem;"></div>
+                <div style="width:100%;max-width:600px;margin:0 auto;">
+                    <div
+                        style="position:relative;padding-bottom:56.25%;height: 700px;;overflow:hidden;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.15);">
+                        <iframe
+                            src="//player.bilibili.com/player.html?isOutside=true&aid=336881127&bvid=BV16R4y1x7Vd&cid=448921002&p=1"
+                            scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"
+                            style="width: 100%; height: 700px;"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+     <section class="content-section" id="campus-compare">
+        <div class="frosted-box">
+            <div class="team-content compare-layout">
+                <h2
+                    style="margin:0px 0px 12.8px 0px; padding-left:20px; position:static; left:auto; top:auto; z-index:auto; background:none; border-radius:0; text-align:left; align-self:flex-start;">
+                    新旧对比</h2>
+                <div class="compare-scroller">
+                    <div class="compare-track">
+                        <div class="compare-grid">
+                    <div class="compare-item">
+                        <div class="compare-caption">教学楼建设前后</div>
+                        <div class="compare-actions">
+                            <button class="compare-fullscreen-btn" type="button">全屏查看</button>
+                        </div>
+                        <div class="compare-slider" data-default="58">
+                            <img src="教学楼/3号楼.jpg" alt="旧景对比图1">
+                            <div class="compare-overlay" style="width:58%;">
+                                <img src="教学楼/5号楼.jpg" alt="新景对比图1">
+                            </div>
+                            <div class="compare-handle" style="left:58%;"></div>
+                            <input class="compare-range" type="range" min="0" max="100" value="58" aria-label="拖动查看教学楼新旧对比">
+                        </div>
+                    </div>
+                    <div class="compare-item">
+                        <div class="compare-caption">宿舍区</div>
+                        <div class="compare-actions">
+                            <button class="compare-fullscreen-btn" type="button">全屏查看</button>
+                        </div>
+                        <div class="compare-slider" data-default="46">
+                            <img src="教学楼/冠门楼 (2).jpg" alt="旧景对比图2">
+                            <div class="compare-overlay" style="width:46%;">
+                                <img src="教学楼/行政楼.jpg" alt="新景对比图2">
+                            </div>
+                            <div class="compare-handle" style="left:46%;"></div>
+                            <input class="compare-range" type="range" min="0" max="100" value="46" aria-label="拖动查看校园门楼新旧对比">
+                        </div>
+                    </div>
+                    <div class="compare-item">
+                        <div class="compare-caption">操场</div>
+                        <div class="compare-actions">
+                            <button class="compare-fullscreen-btn" type="button">全屏查看</button>
+                        </div>
+                        <div class="compare-slider" data-default="62">
+                            <img src="教学楼(旧)/旧图书馆.jpg" alt="旧景对比图3">
+                            <div class="compare-overlay" style="width:62%;">
+                                <img src="教学楼/松源堂.jpg" alt="新景对比图3">
+                            </div>
+                            <div class="compare-handle" style="left:62%;"></div>
+                            <input class="compare-range" type="range" min="0" max="100" value="62" aria-label="拖动查看图书馆新旧对比">
+                        </div>
+                    </div>
+                    <div class="compare-item">
+                        <div class="compare-caption">饭堂</div>
+                        <div class="compare-actions">
+                            <button class="compare-fullscreen-btn" type="button">全屏查看</button>
+                        </div>
+                        <div class="compare-slider" data-default="54">
+                            <img src="教学楼(旧)/科教楼.jpg" alt="旧景对比图4">
+                            <div class="compare-overlay" style="width:54%;">
+                                <img src="教学楼/科教楼.jpg" alt="新景对比图4">
+                            </div>
+                            <div class="compare-handle" style="left:54%;"></div>
+                            <input class="compare-range" type="range" min="0" max="100" value="54" aria-label="拖动查看文教建筑新旧对比">
+                        </div>
+                    </div>
+                    <div class="compare-item">
+                        <div class="compare-caption">听说室</div>
+                        <div class="compare-actions">
+                            <button class="compare-fullscreen-btn" type="button">全屏查看</button>
+                        </div>
+                        <div class="compare-slider" data-default="50">
+                            <img src="校园风景/DJI_20250424133103_0138_D.jpg" alt="旧景对比图5">
+                            <div class="compare-overlay" style="width:50%;">
+                                <img src="校园风景/DJI_20250424133313_0142_D.jpg" alt="新景对比图5">
+                            </div>
+                            <div class="compare-handle" style="left:50%;"></div>
+                            <input class="compare-range" type="range" min="0" max="100" value="50" aria-label="拖动查看校园景观新旧对比">
+                        </div>
+                    </div>
+                    <div class="compare-item">
+                        <div class="compare-caption">活动场地回顾</div>
+                        <div class="compare-actions">
+                            <button class="compare-fullscreen-btn" type="button">全屏查看</button>
+                        </div>
+                        <div class="compare-slider" data-default="67">
+                            <img src="校园活动/微信图片_20250530223309.jpg" alt="旧景对比图6">
+                            <div class="compare-overlay" style="width:67%;">
+                                <img src="校园活动/微信图片_20250530223314.jpg" alt="新景对比图6">
+                            </div>
+                            <div class="compare-handle" style="left:67%;"></div>
+                            <input class="compare-range" type="range" min="0" max="100" value="67" aria-label="拖动查看活动场地新旧对比">
+                        </div>
+                    </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="compare-fullscreen-overlay" aria-hidden="true">
+                    <div class="compare-fullscreen-modal">
+                        <button class="compare-fullscreen-close" type="button" aria-label="关闭全屏">×</button>
+                        <div class="compare-fullscreen-body"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        class Navigation {
+            constructor() {
+                this.nav = document.querySelector('.nav');
+                this.navBox = document.querySelector('.nav-box');
+                this.navLinks = document.querySelectorAll('.nav > ul > li > a');
+                this.defaultColor = '#FFD600';
+                this.init();
+                this.addEventListeners();
+            }
+
+            init() {
+                this.updateIndicator(this.getActiveLink());
+            }
+
+            addEventListeners() {
+                this.navLinks.forEach(link => {
+                    link.addEventListener('mouseenter', () => {
+                        const color = link.dataset.color || this.defaultColor;
+                        this.navBox.style.backgroundColor = color;
+                        this.updateIndicator(link);
+                    });
+
+                    link.addEventListener('mouseleave', () => {
+                        this.navBox.style.backgroundColor = this.defaultColor;
+                        this.updateIndicator(this.getActiveLink());
+                    });
+                });
+
+                window.addEventListener('resize', () => this.updateIndicator(this.getActiveLink()));
+            }
+
+            updateIndicator(link) {
+                const navRect = this.nav.getBoundingClientRect();
+                const linkRect = link.getBoundingClientRect();
+
+                this.navBox.style.width = `${link.offsetWidth}px`;
+                this.navBox.style.left = `${linkRect.left - navRect.left}px`;
+            }
+
+            getActiveLink() {
+                return document.querySelector('.nav a[data-active]') || this.navLinks[2];
+            }
+        }
+
+        class ModuleLoader {
+            constructor() {
+                this.observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        }
+                    });
+                }, { threshold: 0.2 });
+
+                document.querySelectorAll('.content-section').forEach(section => {
+                    this.observer.observe(section);
+                });
+            }
+        }
+
+        class ScrollController {
+            constructor() {
+                this.sections = Array.from(document.querySelectorAll('.content-section'));
+                this.currentIndex = 0;
+                this.isScrolling = false;
+                this.animFrameId = null;
+                this.init();
+            }
+
+            init() {
+                window.addEventListener('wheel', this.handleWheel.bind(this), { passive: false });
+                window.addEventListener('keydown', this.handleKeydown.bind(this));
+            }
+
+            handleWheel(e) {
+                if (this.isScrolling) return;
+                e.preventDefault();
+                const scrollY = window.pageYOffset;
+                let idx = 0;
+                for (let i = 0; i < this.sections.length; i++) {
+                    if (this.sections[i].offsetTop - 110 <= scrollY) {
+                        idx = i;
+                    }
+                }
+                this.currentIndex = idx;
+                const delta = Math.sign(e.deltaY);
+                this.scrollToSection(delta);
+            }
+
+            handleKeydown(e) {
+                if (this.isScrolling) return;
+                if (["ArrowDown", "ArrowRight", "PageDown"].includes(e.key)) {
+                    e.preventDefault();
+                    this.scrollToSection(1);
+                } else if (["ArrowUp", "ArrowLeft", "PageUp"].includes(e.key)) {
+                    e.preventDefault();
+                    this.scrollToSection(-1);
+                }
+            }
+
+            scrollToSection(direction) {
+                if (this.isScrolling) return;
+                this.isScrolling = true;
+                if (this.animFrameId) {
+                    cancelAnimationFrame(this.animFrameId);
+                    this.animFrameId = null;
+                }
+                const newIndex = Math.max(0, Math.min(this.currentIndex + direction, this.sections.length - 1));
+                if (newIndex !== this.currentIndex) {
+                    this.currentIndex = newIndex;
+                    const target = this.sections[this.currentIndex];
+                    const navHeight = 100;
+                    const targetTop = target.offsetTop - navHeight;
+                    const start = window.pageYOffset;
+                    const distance = targetTop - start;
+                    const duration = 400;
+                    const startTime = performance.now();
+                    const animate = (currentTime) => {
+                        const elapsed = currentTime - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        const ease = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
+                        window.scrollTo(0, Math.max(0, start + distance * ease));
+                        if (progress < 1) {
+                            this.animFrameId = requestAnimationFrame(animate);
+                        } else {
+                            window.scrollTo(0, Math.max(0, targetTop));
+                            this.animFrameId = null;
+                            this.isScrolling = false;
+                        }
+                    };
+                    this.animFrameId = requestAnimationFrame(animate);
+                } else {
+                    this.isScrolling = false;
+                }
+            }
+        }
+
+        // 3D轮播图悬停控制
+        class CarouselController {
+            constructor() {
+                this.carousels = document.querySelectorAll('.carousel-3d-container');
+                this.init();
+            }
+            
+            init() {
+                this.carousels.forEach(carousel => {
+                    carousel.addEventListener('mouseenter', () => {
+                        carousel.classList.add('paused');
+                    });
+                    
+                    carousel.addEventListener('mouseleave', () => {
+                        carousel.classList.remove('paused');
+                    });
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const navInstance = new Navigation();
+            new ModuleLoader();
+            new ScrollController();
+            new CarouselController();
+
+            const syncCompareSlider = (slider) => {
+                const range = slider.querySelector('.compare-range');
+                const overlay = slider.querySelector('.compare-overlay');
+                const handle = slider.querySelector('.compare-handle');
+                let isDragging = false;
+
+                const syncSlider = (percent) => {
+                    const value = Math.max(0, Math.min(100, percent));
+                    overlay.style.width = `${value}%`;
+                    handle.style.left = `${value}%`;
+                    range.value = value;
+                };
+
+                syncSlider(Number(range.value || slider.dataset.default || 50));
+
+                range.addEventListener('input', (event) => {
+                    syncSlider(Number(event.target.value));
+                });
+
+                slider.addEventListener('pointerdown', (event) => {
+                    if (event.target === range) return;
+                    isDragging = true;
+                    const rect = slider.getBoundingClientRect();
+                    const percent = ((event.clientX - rect.left) / rect.width) * 100;
+                    syncSlider(percent);
+                });
+
+                slider.addEventListener('pointermove', (event) => {
+                    if (!isDragging) return;
+                    const rect = slider.getBoundingClientRect();
+                    const percent = ((event.clientX - rect.left) / rect.width) * 100;
+                    syncSlider(percent);
+                });
+
+                window.addEventListener('pointerup', () => {
+                    isDragging = false;
+                });
+            };
+
+            const compareSliders = document.querySelectorAll('.compare-slider');
+            compareSliders.forEach(slider => syncCompareSlider(slider));
+
+            const compareFullscreenOverlay = document.querySelector('.compare-fullscreen-overlay');
+            const compareFullscreenBody = document.querySelector('.compare-fullscreen-body');
+            const compareFullscreenClose = document.querySelector('.compare-fullscreen-close');
+
+            const closeCompareFullscreen = () => {
+                if (!compareFullscreenOverlay) return;
+                compareFullscreenOverlay.classList.remove('active');
+                compareFullscreenOverlay.setAttribute('aria-hidden', 'true');
+                compareFullscreenBody.innerHTML = '';
+                document.body.style.overflow = '';
+            };
+
+            const openCompareFullscreen = (sourceSlider) => {
+                if (!sourceSlider || !compareFullscreenBody || !compareFullscreenOverlay) return;
+
+                const fullscreenSlider = sourceSlider.cloneNode(true);
+                compareFullscreenBody.innerHTML = '';
+                compareFullscreenBody.appendChild(fullscreenSlider);
+                syncCompareSlider(fullscreenSlider);
+                compareFullscreenOverlay.classList.add('active');
+                compareFullscreenOverlay.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            };
+
+            document.querySelectorAll('.compare-fullscreen-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const sourceSlider = button.closest('.compare-item')?.querySelector('.compare-slider');
+                    openCompareFullscreen(sourceSlider);
+                });
+            });
+
+            document.querySelectorAll('.compare-slider').forEach(slider => {
+                slider.addEventListener('click', (event) => {
+                    if (event.target === slider.querySelector('.compare-range')) return;
+                    openCompareFullscreen(slider);
+                });
+            });
+
+            if (compareFullscreenClose) {
+                compareFullscreenClose.addEventListener('click', closeCompareFullscreen);
+            }
+
+            if (compareFullscreenOverlay) {
+                compareFullscreenOverlay.addEventListener('click', (event) => {
+                    if (event.target === compareFullscreenOverlay) {
+                        closeCompareFullscreen();
+                    }
+                });
+            }
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    closeCompareFullscreen();
+                }
+            });
+
+            const compareTrack = document.querySelector('.compare-track');
+            const compareGrid = document.querySelector('.compare-grid');
+            if (compareTrack && compareGrid) {
+                const clone = compareGrid.cloneNode(true);
+                clone.classList.add('compare-grid-clone');
+                compareTrack.appendChild(clone);
+            }
+
+            const cardStack = document.querySelector('#campus-history .card-stack-scroller');
+            const cards = document.querySelectorAll('#campus-history .card-stack-item');
+
+            if (cardStack && cards.length) {
+                let frameId = null;
+
+                const updateCardScale = () => {
+                    const viewportHeight = window.innerHeight;
+                    const startLine = viewportHeight * 0.86;
+                    const endLine = viewportHeight * 0.16;
+
+                    cards.forEach((card, index) => {
+                        const cardRect = card.getBoundingClientRect();
+                        const cardCenter = cardRect.top + cardRect.height / 2;
+                        const rawProgress = (startLine - cardCenter) / (startLine - endLine);
+                        const progress = Math.min(Math.max(rawProgress, 0), 1);
+                        const eased = progress * progress * (3 - 2 * progress);
+                        const scale = 1 - eased * 0.6;
+                        const opacity = 1 - eased * 0.5;
+                        const yOffset = (1 - eased) * 24;
+                        const rotate = index % 2 === 0 ? -10 : 10;
+                        const shadowAlpha = 0.16 + (1 - eased) * 0.18;
+
+                        card.style.transform = `translateY(${yOffset}px) rotateY(${rotate}deg) scale(${scale})`;
+                        card.style.opacity = opacity;
+                        card.style.filter = `blur(${eased * 2.2}px)`;
+                        card.style.boxShadow = `0 12px 30px rgba(0,0,0,${shadowAlpha})`;
+                        card.style.borderColor = `rgba(255,255,255,${0.7 - eased * 0.3})`;
+                    });
+
+                    frameId = requestAnimationFrame(updateCardScale);
+                };
+
+                if (frameId) cancelAnimationFrame(frameId);
+                updateCardScale();
+                window.addEventListener('resize', () => {
+                    if (frameId) cancelAnimationFrame(frameId);
+                    updateCardScale();
+                }, { passive: true });
+            }
+
+            const historyPlayer = document.querySelector('.history-player');
+            const fullscreenButton = document.querySelector('.fullscreen-toggle');
+            if (historyPlayer && fullscreenButton) {
+                const updateFullscreenState = () => {
+                    const isFullscreen = document.fullscreenElement === historyPlayer || document.webkitFullscreenElement === historyPlayer;
+                    historyPlayer.classList.toggle('fullscreen', isFullscreen);
+                    fullscreenButton.textContent = isFullscreen ? '退出全屏' : '全屏';
+                };
+
+                fullscreenButton.addEventListener('click', () => {
+                    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                        if (historyPlayer.requestFullscreen) {
+                            historyPlayer.requestFullscreen();
+                        } else if (historyPlayer.webkitRequestFullscreen) {
+                            historyPlayer.webkitRequestFullscreen();
+                        }
+                    } else if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    }
+                });
+
+                document.addEventListener('fullscreenchange', updateFullscreenState);
+                document.addEventListener('webkitfullscreenchange', updateFullscreenState);
+                updateFullscreenState();
+            }
+
+            // 初始化旋转时间轴变量（有则设置）
+            const cardList = document.querySelector('.card-list');
+            if (cardList) {
+                cardList.style.setProperty('--rotate-speed', '30');
+                cardList.style.setProperty('--easing', 'linear');
+            }
+
+            // 子菜单点击：平滑滚动到对应锚点并将顶层触发项设为激活
+            document.querySelectorAll('.nav .submenu a').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const href = this.getAttribute('href') || '';
+                    if (href.startsWith('#')) {
+                        const id = href.slice(1);
+                        const target = document.getElementById(id);
+                        if (target) target.scrollIntoView({ behavior: 'smooth' });
+                    }
+
+                    // 激活顶部触发器并更新指示条
+                    const trigger = document.querySelector('.nav .dropdown > a');
+                    if (trigger) {
+                        document.querySelectorAll('.nav > ul > li > a').forEach(l => l.removeAttribute('data-active'));
+                        trigger.setAttribute('data-active', '');
+                        if (navInstance) navInstance.updateIndicator(trigger);
+                    }
+                });
+            });
+
+            // 用 JS 管理子菜单打开/关闭，带短延迟避免误触闪烁
+            document.querySelectorAll('.nav .dropdown').forEach(drop => {
+                let closeTimer = null;
+                const link = drop.querySelector(':scope > a');
+
+                const open = () => {
+                    if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+                    drop.classList.add('open');
+                };
+
+                const close = () => {
+                    if (closeTimer) clearTimeout(closeTimer);
+                    closeTimer = setTimeout(() => { drop.classList.remove('open'); }, 180);
+                };
+
+                drop.addEventListener('mouseenter', open);
+                drop.addEventListener('mouseleave', close);
+
+                // 移动端点击切换展开（首次点击展开，第二次点击导航）
+                if (link) {
+                    link.addEventListener('click', function(e) {
+                        if (window.matchMedia && window.matchMedia('(max-width: 768px)').matches) {
+                            e.preventDefault();
+                            drop.classList.toggle('open');
+                            document.querySelectorAll('.nav > ul > li > a').forEach(l => l.removeAttribute('data-active'));
+                            this.setAttribute('data-active', '');
+                            if (navInstance) navInstance.updateIndicator(this);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
